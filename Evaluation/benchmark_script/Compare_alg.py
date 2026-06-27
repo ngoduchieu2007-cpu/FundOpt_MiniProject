@@ -96,14 +96,14 @@ def check_constraint(routes, N, M, K):
 if __name__ == "__main__":
 
 
-    for i in range(3, 500, 10):
+    for i in range(10, 200, 10):
         # FIXED: i - 1 ensures N always leaves at least 1 for M
         N = random.randint(1, i - 1)
         M = i - N
         
         K = random.randint(1, min(100, 2 * (N + M)))
         
-        input_size = (1 + 2 * (N + M)) ** 2
+        input_size = (1 + 2 * (N + M))
         print(input_size)
         
         distance, q, Q = generate_input(N, M, K, seed=42)
