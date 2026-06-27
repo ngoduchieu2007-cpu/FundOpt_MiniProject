@@ -101,7 +101,7 @@ if __name__ == "__main__":
         N = random.randint(1, i - 1)
         M = i - N
         
-        K = random.randint(1, min(100, 2 * (N + M)))
+        K = random.randint(1, min(100, (N + M)))
         
         input_size = (1 + 2 * (N + M))
         print(input_size)
