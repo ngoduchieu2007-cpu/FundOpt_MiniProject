@@ -11,59 +11,42 @@ def generate_input(
 ):
     """
     Generate random input for the balanced taxi routing problem.
-
-    Node indexing:
-    - Depot: 0
-    - Passenger pickup: 1..N
-    - Parcel pickup: N+1 .. N+M
-    - Passenger dropoff: N+M+1 .. 2N+M
-    - Parcel dropoff: 2N+M+1 .. 2N+2M
     """
-
     if seed is not None:
         random.seed(seed)
 
     total_nodes = 2 * N + 2 * M + 1
 
-    # -----------------------------
-    # Generate parcel quantities
-    # -----------------------------
+    # 1. Generate parcel quantities
     q = [random.randint(1, max_parcel_quantity) for _ in range(M)]
 
-    # -----------------------------
-    # Generate taxi capacities
-    # Ensure capacities can handle parcels
-    # -----------------------------
+    # 2. Generate taxi capacities
+    # FIX: Ensure capacities can handle AT LEAST the largest single parcel
+    # Otherwise, the instance might be inherently infeasible.
+    min_required_capacity = max(q) if q else 1
+    safe_max_capacity = max(max_taxi_capacity, min_required_capacity)
+    
     Q = [
-        random.randint(1, max_taxi_capacity)
+        random.randint(min_required_capacity, safe_max_capacity)
         for _ in range(K)
     ]
 
-    # -----------------------------
-    # Generate coordinates
-    # -----------------------------
+    # 3. Generate coordinates
     coords = []
-
     for _ in range(total_nodes):
         x = random.randint(0, max_coord)
         y = random.randint(0, max_coord)
         coords.append((x, y))
 
-    # -----------------------------
-    # Build symmetric distance matrix
-    # -----------------------------
+    # 4. Build symmetric distance matrix
     d = [[0] * total_nodes for _ in range(total_nodes)]
-
     for i in range(total_nodes):
         xi, yi = coords[i]
-
         for j in range(total_nodes):
-            xj, yj = coords[j]
-
             if i == j:
                 d[i][j] = 0
             else:
                 # Manhattan distance
-                dist = abs(xi - xj) + abs(yi - yj)
-                d[i][j] = dist
-    return d, q, Q
+                d[i][j] = abs(xi - coords[j][0]) + abs(yi - coords[j][1])
+                
+    return d,q,Q

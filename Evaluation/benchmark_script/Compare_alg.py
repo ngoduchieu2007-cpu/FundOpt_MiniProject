@@ -2,7 +2,8 @@ import random
 import time
 from random_input import *
 from typing import List, Tuple, Optional
-
+from bnb import bnb
+from scip import *
 def check_solution(N: int, M: int, K: int, 
                    q: List[int], Q: List[int], 
                    routes: List[List[int]], 
@@ -92,17 +93,21 @@ def check_constraint(routes, N, M, K):
             if (node > N and node <= 2*N) and (route[i+1] <= N):
                 return False
     return True
-
 if __name__ == "__main__":
 
 
-    for i in range(1, 500, 10):
-        N = random.randint(1, i)
+    for i in range(3, 500, 10):
+        # FIXED: i - 1 ensures N always leaves at least 1 for M
+        N = random.randint(1, i - 1)
         M = i - N
-        K = random.randint(1, 2 * (N + M))
+        
+        K = random.randint(1, min(100, 2 * (N + M)))
+        
         input_size = (1 + 2 * (N + M)) ** 2
         print(input_size)
+        
         distance, q, Q = generate_input(N, M, K, seed=42)
+        
         # --- USAGE INSTRUCTIONS ---
         # The following block evaluates multiple algorithms to solve the routing problem.
         # Each function (e.g., greedy_passenger_first) returns a solution representing the taxis' routes (stored in resX).
@@ -127,6 +132,32 @@ if __name__ == "__main__":
         #     print(f"Error in greedy_passenger_first: {max_len_or_error}")
         # else:
         #     print(f"greedy_passenger_first valid! Max route length: {max_len_or_error}")
+
+        res1, time1 = measure_time(bnb)(N,M,K,q,Q,distance)
         
+        # FIXED: Added 'if res1:' to prevent crashing if the solver times out and returns None
+        if res1: 
+            is_valid, max_len_or_error = check_solution(N, M, K, q, Q, res1, distance)
+            if not is_valid:
+                print(f"Error in bnb: {max_len_or_error}")
+            else:
+                print(f"bnb valid! Max route length: {max_len_or_error}")
+                for route in res1:
+                    print(len(route), route)
+        
+
+        res2, time2 = measure_time(solve_cvrp_pd)(N,M,K,q,Q,distance)
+        
+        # FIXED: Added 'if res2:' to prevent crashing if the solver times out and returns None
+        if res2:
+            is_valid, max_len_or_error = check_solution(N, M, K, q, Q, res2, distance)
+            if not is_valid:
+                print(f"Error in solve_cvrp_pd: {max_len_or_error}")
+            else:
+                print(f"solve_cvrp_pd valid! Max route length: {max_len_or_error}")
+                for route in res2:
+                    print(len(route), route)
+                    
         print(f"N={N}, M={M}, K={K} -> ... \n")
-        print(f"N={N}, M={M}, K={K} -> ... \n")
+        print(f"bnb time: {time1}")
+        print(f"solve_cvrp_pd time: {time2}")
