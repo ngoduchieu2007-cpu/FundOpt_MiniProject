@@ -278,3 +278,19 @@ def greedy_algorithm(N, M, K, q, Q, d):
     res2, max_dist2 = score_based_greedy(N, M, K, q, Q, d)
     res = res1 if max_dist1 <= max_dist2 else res2
     return res
+
+
+def main():
+    N, M, K = map(int, input().split())
+    q = list(map(int, input().split()))
+    Q = list(map(int, input().split()))
+    d = [list(map(int, input().split())) for _ in range(2 * N + 2 * M + 1)]
+    result = greedy_algorithm(N, M, K, q, Q, d)
+    print(K)
+    for k in range(K):
+        print(len(result[k]))
+        print(" ".join(map(str, result[k])))
+
+
+if __name__ == "__main__":
+    main()
