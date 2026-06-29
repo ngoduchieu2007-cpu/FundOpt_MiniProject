@@ -1,6 +1,8 @@
+import sys
+
+
 # Initialize solution by greedy heuristic, then optimize by local search - first-improvement (insert/relocate)
 # Lấy initial solution của greedy algorithm
-# Input
 def local_search_algorithm(N, M, K, q, Q, d):
     def distance_based_greedy_algorithm(N, M, K, q, Q, d):
         routes = [[0] for _ in range(K)]
@@ -450,11 +452,16 @@ def local_search_algorithm(N, M, K, q, Q, d):
     return routes
 
 
+def read_input():
+    N, M, K = map(int, sys.stdin.readline().split())
+    q = list(map(int, sys.stdin.readline().split()))
+    Q = list(map(int, sys.stdin.readline().split()))
+    d = [list(map(int, sys.stdin.readline().split())) for _ in range(2 * N + 2 * M + 1)]
+    return N, M, K, q, Q, d
+
+
 def main():
-    N, M, K = map(int, input().split())
-    q = list(map(int, input().split()))
-    Q = list(map(int, input().split()))
-    d = [list(map(int, input().split())) for _ in range(2 * N + 2 * M + 1)]
+    N, M, K, q, Q, d = read_input()
     result = local_search_algorithm(N, M, K, q, Q, d)
     print(K)
     for k in range(K):
