@@ -4,7 +4,6 @@ from random_input import *
 from typing import List, Tuple, Optional
 from bnb import bnb
 from scip import *
-from Solution_methods.Heuristic import Cheapest_Insertion as c
 def check_solution(N: int, M: int, K: int, 
                    q: List[int], Q: List[int], 
                    routes: List[List[int]], 
@@ -147,7 +146,7 @@ if __name__ == "__main__":
                     print(len(route), route)
         
 
-        res2, time2 = measure_time(c.build_routes)(N,M,K,q,Q,distance)
+        res2, time2 = measure_time(solve_cvrp_pd)(N,M,K,q,Q,distance)
         
         # FIXED: Added 'if res2:' to prevent crashing if the solver times out and returns None
         if res2:
