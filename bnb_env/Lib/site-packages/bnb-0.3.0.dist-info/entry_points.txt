@@ -1,0 +1,3 @@
+[console_scripts]
+bnb=bnb.blogger:cli
+
